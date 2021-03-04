@@ -83,7 +83,7 @@ $document->loadHTML($source);
 $htmlString = '';
 $bodyNodeList = $document->getElementsByTagName('body');
 foreach ($bodyNodeList as $bodyNode) {
-    replaceTags($bodyNode, $document, $htmlString);
+    replaceTags($bodyNode, $document);
 }
 
 $htmlString = $document->saveHTML();
@@ -93,18 +93,19 @@ echo $htmlString;
 /**
  * 
  */
-function replaceTags(&$node, $document, $htmlString) {
-    var_dump($node);
+function replaceTags($node, $document) {
     if ($node->childNodes !== null) {
-        foreach ($node->childNodes as $childNode) {
-            if ($childNode->nodeName === 'div') {
-                $newElement = $document->createElement('amp-div');
-                $node->replaceChild($newElement, $childNode);
+        for ($i = 0; $i < $node->childNodes->length; $i++) {
+            $item = $node->childNodes->item($i);
+            if ($item->nodeName === 'div') {
+                $newElement = $document->createElement('amp-div', $item->nodeValue);
+                $node->replaceChild($newElement, $item);
             }
 
-            if ($childNode->childNodes !== null) {
-                foreach ($childNode->childNodes as $babyNode) {
-                    replaceTags($babyNode, $document, $htmlString);
+            if ($item->childNodes !== null) {
+                for ($j = 0; $j < $item->childNodes->length; $j++) {
+                    $childItem = $item->childNodes->item($j);
+                    replaceTags($childItem, $document);
                 }
             }
         }
